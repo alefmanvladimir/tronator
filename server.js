@@ -19,13 +19,6 @@ const privateKey = "1e9e06fb5a5c61f8d9566a33e22d6ab77109d073f9d10471765bbf96afc0
 const addressTronator = 'TVkKM66MnezvpGw6puPCuttDxJTaX9QkEd'
 
 
-MongoClient.connect(url, (err, db)=>{
-  if (err) throw err
-  console.log("Database created!")
-
-  db.close()
-})
-
 const newRT3Events = async ()=>{
 
 	let events
@@ -296,12 +289,7 @@ const newLevelT4Events = async ()=>{
 
 
 
-// MongoClient.connect(url, (err, db)=>{
-//   if (err) throw err
-//   console.log("Database created!")
 
-//   db.close()
-// })
 
 // MongoClient.connect(url, function(err, db) {
 //   if (err) throw err

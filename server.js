@@ -1,6 +1,6 @@
 const mongo = require('mongodb')
 const MongoClient = require('mongodb').MongoClient
-const url = "mongodb://localhost:27017/mydb"
+const url = "mongodb://37.77.104.195:27017/mydb"
 const axios = require('axios')
 const express = require('express')
 const cors = require('cors')

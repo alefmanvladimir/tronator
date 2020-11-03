@@ -7,7 +7,7 @@ const cors = require('cors')
 const app = express()
 const port = 8000
 const TronWeb = require('tronweb')
-
+const bodyParser = require('body-parser')
 
 const HttpProvider = TronWeb.providers.HttpProvider;
 const fullNode = new HttpProvider("https://api.trongrid.io");
@@ -382,6 +382,7 @@ const newLevelT4Events = async ()=>{
 // })
 
 app.use(cors({'Access-Control-Allow-Origin': '*'}))
+app.use(bodyParser.json())
 app.listen(port, async ()=>{
 	console.log('Start server on ' + port)
 
@@ -397,11 +398,6 @@ app.listen(port, async ()=>{
 	  if (err) throw err
 	  let dbo = db.db("mydb")
 		console.log('START')
-	  
-	  
-	  
-	  
-	  
 	  
 	  
 	  let checkEvents
@@ -582,11 +578,114 @@ app.listen(port, async ()=>{
 			});
 		})
 
+	});
 
 
-	
+	setInterval(async()=>{
+		await MongoClient.connect(url, { useUnifiedTopology: true }, async (err, db) =>{
+
+	  
+	  if (err) throw err
+	  let dbo = db.db("mydb")
+		console.log('START')
+	  
+	  
+	  let checkEvents
+
+
+
+	  let _newRT3Events = await newRT3Events()
+	  checkEvents = await dbo.collection("newRT3Events").find({}).toArray()
+	  if(checkEvents.length>0)
+	  	await dbo.collection("newRT3Events").drop()
+
+	    await dbo.collection("newRT3Events").insertMany(_newRT3Events, function(err, res) {
+	    	if (err) throw err
+			console.log("Number of newRT3Events inserted: " + res.insertedCount)
+	    // db.close()
+	    }) 
+
+
+	    let _newFT3Events = await newFT3Events()
+		checkEvents = await dbo.collection("newFT3Events").find({}).toArray()
+		if(checkEvents.length>0)
+			await dbo.collection("newFT3Events").drop()
+
+		await dbo.collection("newFT3Events").insertMany(_newFT3Events, function(err, res) {
+			if (err) throw err
+			console.log("Number of newFT3Events inserted: " + res.insertedCount)
+			// db.close()
+		})
+
+		let _payToDirectUplineEvents = await payToDirectUplineEvents()
+		checkEvents = await dbo.collection("payToDirectUplineEvents").find({}).toArray()
+		if(checkEvents.length>0)
+			await dbo.collection("payToDirectUplineEvents").drop()
+
+		await dbo.collection("payToDirectUplineEvents").insertMany(_payToDirectUplineEvents, function(err, res) {
+			if (err) throw err
+			console.log("Number of payToDirectUplineEvents inserted: " + res.insertedCount)
+			// db.close()
+		})
+
+		let _payToT3UplineEvents = await payToT3UplineEvents()
+
+		checkEvents = await dbo.collection("payToT3UplineEvents").find({}).toArray()
+		if(checkEvents.length>0)
+			await dbo.collection("payToT3UplineEvents").drop()
+
+		await dbo.collection("payToT3UplineEvents").insertMany(_payToT3UplineEvents, function(err, res) {
+			if (err) throw err
+			console.log("Number of payToT3UplineEvents inserted: " + res.insertedCount)
+			// db.close()
+		})
+
+		let _payToT4UplineEvents = await payToT4UplineEvents()
+		checkEvents = await dbo.collection("payToT4UplineEvents").find({}).toArray()
+		if(checkEvents.length>0)
+			await dbo.collection("payToT4UplineEvents").drop()
+
+		await dbo.collection("payToT4UplineEvents").insertMany(_payToT4UplineEvents, function(err, res) {
+			if (err) throw err
+			console.log("Number of payToT4UplineEvents inserted: " + res.insertedCount)
+			// db.close()
+		})
+
+
+		let _T4LostMoneyEvents = await T4LostMoneyEvents()
+		checkEvents = await dbo.collection("T4LostMoneyEvents").find({}).toArray()
+		if(checkEvents.length>0)
+			await dbo.collection("T4LostMoneyEvents").drop()
+
+		await dbo.collection("T4LostMoneyEvents").insertMany(_T4LostMoneyEvents, function(err, res) {
+			if (err) throw err
+			console.log("Number of T4LostMoneyEvents inserted: " + res.insertedCount)
+			// db.close()
+		})
+
+
+		let _newT4Events = await newT4Events()
+		checkEvents = await dbo.collection("newT4Events").find({}).toArray()
+		if(checkEvents.length>0)
+			await dbo.collection("newT4Events").drop()
+
+		await dbo.collection("newT4Events").insertMany(_newT4Events, function(err, res) {
+		if (err) throw err
+			console.log("Number of newT4Events inserted: " + res.insertedCount)
+		})
+
+		let _newLevelT4Events = await newLevelT4Events()
+		checkEvents = await dbo.collection("newLevelT4Events").find({}).toArray()
+		if(checkEvents.length>0)
+			await dbo.collection("newLevelT4Events").drop()
+
+		await dbo.collection("newLevelT4Events").insertMany(_newLevelT4Events, function(err, res) {
+		if (err) throw err
+			console.log("Number of newLevelT4Events inserted: " + res.insertedCount)
+		})
 
 	});
+	}, 600000);
 
 })
 
@@ -594,7 +693,8 @@ app.post('/newRT3Events', async (req, res)=>{
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	// console.log('req', req)
-	// console.log('req', req.req)
+	console.log('req body', req.body)
+	console.log('req.params', req.params)
 	let events = await dbo.collection("newRT3Events").find({}).toArray()
 	res.send(events)
 })
@@ -616,7 +716,16 @@ app.post('/payToDirectUplineEvents', async (req, res)=>{
 app.post('/payToT3UplineEvents', async (req, res)=>{
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
-	let events = await dbo.collection("payToT3UplineEvents").find({}).toArray()
+	let {address} = req.body
+	let query1 = {
+		result['_uplineAddress']: "0x6ac564bbe93beb772f5916118504c238ef4125af"
+	}
+	let query2 = {
+		result: {
+			_user: address
+		}
+	}
+	let events = await dbo.collection("payToT3UplineEvents").find().toArray()
 	res.send(events)
 })
 

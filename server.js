@@ -717,14 +717,14 @@ app.post('/payToT3UplineEvents', async (req, res)=>{
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	let {address} = req.body
-	let query1 = {
-		result['_uplineAddress']: "0x6ac564bbe93beb772f5916118504c238ef4125af"
-	}
-	let query2 = {
-		result: {
-			_user: address
-		}
-	}
+	// let query1 = {
+	// 	result['_uplineAddress']: "0x6ac564bbe93beb772f5916118504c238ef4125af"
+	// }
+	// let query2 = {
+	// 	result: {
+	// 		_user: address
+	// 	}
+	// }
 	let events = await dbo.collection("payToT3UplineEvents").find().toArray()
 	res.send(events)
 })

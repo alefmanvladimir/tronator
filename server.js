@@ -5,7 +5,7 @@ const axios = require('axios')
 const express = require('express')
 const cors = require('cors')
 const app = express()
-const port = 8000
+const port = 8080
 const TronWeb = require('tronweb')
 const bodyParser = require('body-parser')
 
@@ -689,7 +689,13 @@ app.listen(port, async ()=>{
 
 })
 
+
+app.get('/test', (req, res)=>{
+	res.send('hello')
+})
+
 app.post('/newRT3Events', async (req, res)=>{
+	res.header("Access-Control-Allow-Origin", "*");
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	// console.log('req', req)
@@ -700,6 +706,7 @@ app.post('/newRT3Events', async (req, res)=>{
 })
 
 app.post('/newFT3Events', async (req, res)=>{
+	res.header("Access-Control-Allow-Origin", "*");
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	let events = await dbo.collection("newFT3Events").find({}).toArray()
@@ -707,6 +714,7 @@ app.post('/newFT3Events', async (req, res)=>{
 })
 
 app.post('/payToDirectUplineEvents', async (req, res)=>{
+	res.header("Access-Control-Allow-Origin", "*");
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	let events = await dbo.collection("payToDirectUplineEvents").find({}).toArray()
@@ -714,6 +722,7 @@ app.post('/payToDirectUplineEvents', async (req, res)=>{
 })
 
 app.post('/payToT3UplineEvents', async (req, res)=>{
+	res.header("Access-Control-Allow-Origin", "*");
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	let {address} = req.body
@@ -730,6 +739,7 @@ app.post('/payToT3UplineEvents', async (req, res)=>{
 })
 
 app.post('/payToT4UplineEvents', async (req, res)=>{
+	res.header("Access-Control-Allow-Origin", "*");
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	let events = await dbo.collection("payToT4UplineEvents").find({}).toArray()
@@ -737,6 +747,7 @@ app.post('/payToT4UplineEvents', async (req, res)=>{
 })
 
 app.post('/T4LostMoneyEvents', async (req, res)=>{
+	res.header("Access-Control-Allow-Origin", "*");
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	let events = await dbo.collection("T4LostMoneyEvents").find({}).toArray()
@@ -744,6 +755,7 @@ app.post('/T4LostMoneyEvents', async (req, res)=>{
 })
 
 app.post('/newT4Events', async (req, res)=>{
+	res.header("Access-Control-Allow-Origin", "*");
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	let events = await dbo.collection("newT4Events").find({}).toArray()
@@ -751,6 +763,7 @@ app.post('/newT4Events', async (req, res)=>{
 })
 
 app.post('/newLevelT4Events', async (req, res)=>{
+	res.header("Access-Control-Allow-Origin", "*");
 	const db = await MongoClient.connect(url, { useUnifiedTopology: true })
 	let dbo = db.db("mydb")
 	let events = await dbo.collection("newLevelT4Events").find({}).toArray()
